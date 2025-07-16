@@ -143,6 +143,18 @@ if (container) {
     }
     animate();
     
+    // --- RESIZE HANDLER (NEW!) ---
+    window.addEventListener('resize', () => {
+        const newRect = container.getBoundingClientRect();
+        if (newRect.width > 0 && newRect.height > 0) {
+            // Update camera aspect ratio
+            camera.aspect = newRect.width / newRect.height;
+            camera.updateProjectionMatrix();
+            // Update renderer size
+            renderer.setSize(newRect.width, newRect.height);
+        }
+    });
+    
     setTimeout(() => {
         if (ui.cloudTooltip) ui.cloudTooltip.classList.add('opacity-100');
         setTimeout(() => { if (ui.cloudTooltip) ui.cloudTooltip.classList.remove('opacity-100'); }, 3500);
