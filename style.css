@@ -1,151 +1,93 @@
 body, .body-wrapper {
     font-family: 'Noto Sans Thai', sans-serif;
-    background: linear-gradient(135deg, #3a3897 0%, #2c2a72 40%, #1a1a4e 100%);
-    overflow: hidden;
+    transition: background 0.8s ease-in-out;
 }
 
-.weather-widget::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 70%);
-    animation: shimmer 15s infinite linear;
-    pointer-events: none;
-    z-index: 1;
-}
+/* --- THEMES --- */
+.theme-day-clear { background: linear-gradient(135deg, #81D4FA 0%, #4FC3F7 100%); }
+.theme-night-clear { background: linear-gradient(135deg, #3a3897 0%, #1a1a4e 100%); }
+.theme-rain { background: linear-gradient(135deg, #607D8B 0%, #455A64 100%); }
+.theme-snow { background: linear-gradient(135deg, #CFD8DC 0%, #B0BEC5 100%); }
 
-@keyframes shimmer {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.weather-widget {
+    transition: background 0.8s ease-in-out;
 }
+.theme-day-clear .weather-widget { background: rgba(0, 150, 255, 0.3); }
+.theme-night-clear .weather-widget { background: rgba(58, 56, 151, 0.5); }
+.theme-rain .weather-widget { background: rgba(38, 50, 56, 0.5); }
+.theme-snow .weather-widget { background: rgba(96, 125, 139, 0.4); }
 
+.temp-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    transition: background 0.8s ease-in-out;
+}
+.theme-day-clear .temp-text { background-image: linear-gradient(to right, #ffffff, #e0f7fa); }
+.theme-night-clear .temp-text { background-image: linear-gradient(to right, #ffffff, #e3f2fd); }
+.theme-rain .temp-text { background-image: linear-gradient(to right, #cfd8dc, #eceff1); }
+.theme-snow .temp-text { background-image: linear-gradient(to right, #ffffff, #e0e0e0); }
+
+
+/* --- ANIMATIONS --- */
 .weather-icon-main {
     filter: drop-shadow(0 0 12px rgba(220, 220, 255, 0.5));
     animation: floating 3.5s ease-in-out infinite;
 }
+@keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
 
-@keyframes floating {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0px); }
-}
-
-#cloud-container {
-    pointer-events: auto;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-.animate-fadeInUp {
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
-}
-
-@keyframes fadeInScaleUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-.animate-fadeInScaleUp {
-    opacity: 0;
-    animation: fadeInScaleUp 0.7s ease-out forwards;
-}
-
-/* ICON ANIMATIONS */
-@keyframes gentle-bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
-}
-.precip-icon {
-    animation: gentle-bob 2.5s ease-in-out infinite;
-}
-
-@keyframes gentle-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-.sun-icon {
+.sun-info .sun-icon {
     transition: transform 0.5s ease-in-out;
     animation: gentle-spin 30s linear infinite;
 }
-.sun-info .sunrise:hover .sun-icon,
-.sun-info .sunset:hover .sun-icon {
-    transform: rotate(45deg) scale(1.2);
-    animation-play-state: paused;
-}
-
+@keyframes gentle-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.sun-info:hover .sun-icon { transform: rotate(45deg) scale(1.2); animation-play-state: paused; }
 
 .forecast-day {
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
-    background-color: rgba(147, 112, 219, 0.1); /* Themed background */
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 .forecast-day:hover {
     transform: translateY(-5px);
-    box-shadow: 0 0 25px rgba(196, 181, 253, 0.2), 0 4px 10px rgba(0,0,0,0.2);
-    background-color: rgba(147, 112, 219, 0.2); /* Themed hover background */
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0,0,0,0.2);
+    background-color: rgba(255, 255, 255, 0.1);
 }
-.forecast-day:hover .forecast-icon {
-    animation: icon-bounce 0.6s ease-out;
-}
-.forecast-icon {
-    transition: transform 0.3s ease-out;
-}
-@keyframes icon-bounce {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.25); }
-    100% { transform: scale(1); }
-}
+.forecast-day:hover .forecast-icon { animation: icon-bounce 0.6s ease-out; }
+@keyframes icon-bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.25); } }
 
 
-/* Shooting Star Animation */
-.shooting-star {
+/* --- OVERLAY EFFECTS (RAIN/SNOW) --- */
+#theme-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+}
+.rain-anim, .snow-anim {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    height: 2px;
-    background: linear-gradient(-45deg, rgba(147, 197, 253, 1), rgba(147, 197, 253, 0));
-    border-radius: 999px;
-    filter: drop-shadow(0 0 6px rgba(147, 197, 253, 0.5));
-    animation: shooting-star-anim 3s ease-in-out infinite;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-repeat: repeat;
+    animation: fall 2s linear infinite;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
 }
-@keyframes shooting-star-anim {
-    0% {
-        opacity: 0;
-        transform: translateX(0) rotate(45deg);
-    }
-    10% {
-        opacity: 1;
-    }
-    90% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(-300px) rotate(45deg);
-    }
-}
+.theme-rain .rain-anim, .theme-snow .snow-anim { opacity: 1; }
 
-.delay-100 { animation-delay: 0.1s !important; }
-.delay-200 { animation-delay: 0.2s !important; }
-.delay-300 { animation-delay: 0.3s !important; }
-.delay-400 { animation-delay: 0.4s !important; }
-.delay-500 { animation-delay: 0.5s !important; }
-.delay-600 { animation-delay: 0.6s !important; }
-.delay-700 { animation-delay: 0.7s !important; }
-.delay-800 { animation-delay: 0.8s !important; }
+.rain-anim {
+    background-image: linear-gradient(transparent, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 100%);
+    background-size: 3px 20px;
+}
+.snow-anim {
+    background-image: radial-gradient(white 1px, transparent 1px), radial-gradient(white 1px, transparent 1px);
+    background-size: 30px 30px, 30px 30px;
+    background-position: 0 0, 15px 15px;
+}
+@keyframes fall {
+    to { transform: translateY(100px); }
+}
